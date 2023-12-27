@@ -4,13 +4,22 @@ const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = 3000;
+const port = 3001;
+
+// Create a file-based SQLite database
+const db = new sqlite3.Database('banking_database.db');
 
 // Create a database in-memory (for demo purposes; in production, use a file-based database)
-const db = new sqlite3.Database(':memory:');
+// const db = new sqlite3.Database(':memory:');
 
 // Create users table
+
+// Initialize the database and create tables
+db.serialize(() => {
 db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT, balance REAL)');
+
+console.log('Database initialized');
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public')); // Assuming your HTML, CSS, and JS files are in a 'public' folder
@@ -51,23 +60,30 @@ app.post('/signup', async (req, res) => {
 // Login route
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
     try {
-        // Check credentials
         const user = await getUserByUsername(username);
-        console.log('Received credentials:', username, password);
-        console.log('User from the database:', user);
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
+        if (!user) {
+            console.log('User not found.');
+            return res.status(404).send('User not found.');
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
+            console.log('Password mismatch.');
             return res.status(401).send('Invalid username or password.');
         }
 
+        console.log('Login successful:', user.username);
         res.json({ username: user.username, balance: user.balance });
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).send('Internal Server Error');
     }
 });
+
+
 
 
 // Check if a username already exists
@@ -122,11 +138,13 @@ async function getUserByUsername(username) {
             if (err) {
                 reject(err);
             } else {
+                console.log('User data retrieved:', row);
                 resolve(row);
             }
         });
     });
 }
+
 
 async function createUser(username, password) {
     return new Promise((resolve, reject) => {

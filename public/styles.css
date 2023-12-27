@@ -1,0 +1,77 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+header {
+    background-color: #3498db; /* Dodger Blue */
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form {
+    text-align: center;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    color: #2c3e50; /* Dark Blue-Gray */
+}
+
+input {
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #bdc3c7; /* Lighter Blue-Gray */
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #27ae60; /* Nephritis Green */
+    color: #fff;
+    padding: 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+button:hover {
+    background-color: #219d54; /* Darker shade of Nephritis Green */
+}
+
+#balance-container,
+#deposit-container {
+    text-align: center;
+}
+
+#logout {
+    background-color: #e74c3c; /* Alizarin Red */
+    margin-top: 20px;
+}
+
+#logout:hover {
+    background-color: #c0392b; /* Darker shade of Alizarin Red */
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 600px) {
+    .container {
+        width: 90%;
+    }
+}

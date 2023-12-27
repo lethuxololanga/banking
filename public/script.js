@@ -47,10 +47,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loginForm.addEventListener('submit', async function (event) {
         event.preventDefault();
-
+    
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-
+    
         try {
             const success = await authenticateUser(username, password);
             if (success) {
@@ -66,8 +66,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     async function authenticateUser(username, password) {
-        // Simulate checking credentials (replace with server-side logic)
-        // For simplicity, we're using a hardcoded username and password
+        console.log('Authenticating user:', username);
+    
         const response = await fetch('/login', {
             method: 'POST',
             headers: {
@@ -75,14 +75,26 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: `username=${username}&password=${password}`,
         });
-
+    
         if (!response.ok) {
             throw new Error(`Authentication failed: ${response.statusText}`);
         }
-
+    
         const data = await response.json();
-        return data.success; // Replace with the actual success property from your server response
+    
+        // Update the logic based on the actual server response
+        if (data.username) {
+            currentUser = { username: data.username };
+            showBalance(data.username, data.balance);
+            console.log('Login successful:', data.username);
+            return true;
+        } else {
+            console.log('Invalid username or password.');
+            return false;
+        }
     }
+    
+    
 
     signupForm.addEventListener('submit', async function (event) {
         event.preventDefault();
@@ -144,14 +156,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     logoutButton.addEventListener('click', async function () {
         try {
+            console.log('Logout button clicked.');
+            currentUser = null; // Move this line here
             await logoutUser(); // Implement logout logic on the server side
-            currentUser = null;
             showLoginForm();
         } catch (error) {
             console.error('Error during logout:', error);
             // Optionally, display an error message to the user
         }
     });
+    
 
     async function logoutUser() {
         // Simulate logout logic (replace with server-side logic)
@@ -166,14 +180,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function showBalance() {
         // Display user's balance and deposit form
-        balanceDisplay.textContent = `Balance for ${currentUser.username}: R100.00`;
+        balanceDisplay.textContent = `Balance for ${currentUser.username}: R0.00`;
         balanceContainer.style.display = 'block';
         depositContainer.style.display = 'block';
-        loginForm.style.display = 'none';
+    
+        // Assuming you have a loginForm variable
+        if (loginForm) {
+            loginForm.style.display = 'none';
+        }
+    
         signupForm.style.display = 'none';
         transactionHistoryContainer.style.display = 'none';
         accountSettingsContainer.style.display = 'none';
     }
+    
 
     function showLoginForm() {
         // Display the login form and hide other sections
